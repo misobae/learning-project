@@ -3,7 +3,11 @@ import React, { useState } from 'react';
 
 function App() {
   let [title, setTitle] = useState(['남자 코트 추천', '맛집 추천', '클래스 리뷰']);
-  let [date, setDate] = useState('2월 17일 발행');
+  let [date, setDate] = useState(new Date());
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
   let [like, setLike] = useState(new Array(title.length).fill(0));
   let [modal, setModal] = useState(false);
   let [titleOrder, setTitleOrder] = useState(0);
@@ -33,7 +37,7 @@ function App() {
                   setLike(newLike);
                 }}>❤️</span> {like[i]}
               </h4>
-              <p>{date}</p>
+              <p>{formattedDate}</p>
               <button onClick={(e)=>{
                 e.stopPropagation();
                 let newTitle = [...title];
@@ -47,13 +51,15 @@ function App() {
       
       <input onChange={(e)=>{setInputValue(e.target.value);}}></input>
       <button onClick={()=>{
-        let newTitle = [...title];
-        newTitle.unshift(inputValue);
-        setTitle(newTitle);
+        if (inputValue.trim() !== ''){ // input 공백시 글 발행 방지
+          let newTitle = [...title];
+          newTitle.unshift(inputValue);
+          setTitle(newTitle);
+        }
         }}>글 발행</button>
 
       {
-        modal == true ? <Modal titleOrder={titleOrder} title={title} /> : null
+        modal == true ? <Modal titleOrder={titleOrder} title={title} formattedDate={formattedDate} /> : null
       }
       
     </div>
@@ -65,7 +71,7 @@ function Modal(props){
   return (
     <div className="modal">
       <h4>{props.title[props.titleOrder]}</h4>
-      <p>날짜</p>
+      <p>{props.formattedDate}</p>
       <p>상세내용</p>
     </div>
   )
