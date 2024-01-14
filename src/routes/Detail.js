@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
+import {Nav} from 'react-bootstrap';
 
 function DetailPage(props){
   let [visible, setVisible] = useState(true);
   let [inputValue, setInputValue] = useState('');
+  let [tab, setTab] = useState(0);
+  let [fade, setFade] = useState('');
   
   // input에 문자 입력시 alert
   useEffect(()=>{
@@ -11,6 +14,14 @@ function DetailPage(props){
       alert('숫자만 입력하세요');
     }
   }, [inputValue])
+
+  useEffect(()=>{
+    let a = setTimeout(()=>{ setFade('end'); }, 100)
+    return ()=>{
+      clearTimeout(a);
+      setFade('');
+    }
+  }, [])
 
   // Event 팝업 2초 뒤에 꺼짐
   useEffect(()=>{
@@ -26,7 +37,7 @@ function DetailPage(props){
   // 현재 url에 입력한 번호와 같은 번호를 가진 상품을 찾아서 데이터 바인딩
 
   return (
-    <div className="container">
+    <div className={`container start ${fade}`}>
       {
         visible == true
         ? <div className="alert alert-warning">2초 이내 구매시 할인</div>
@@ -44,9 +55,46 @@ function DetailPage(props){
           <p>{foundElement.price}원</p>
           <button className="btn btn-danger">주문하기</button> 
         </div>
+
+        <Nav variant="tabs"  defaultActiveKey="link0">
+          <Nav.Item onClick={()=>{setTab(0)}}>
+            <Nav.Link eventKey="link0">버튼0</Nav.Link>
+          </Nav.Item>
+          <Nav.Item onClick={()=>{setTab(1)}}>
+            <Nav.Link eventKey="link1">버튼1</Nav.Link>
+          </Nav.Item>
+          <Nav.Item onClick={()=>{setTab(2)}}>
+            <Nav.Link eventKey="link2">버튼2</Nav.Link>
+          </Nav.Item>
+        </Nav>
+        <TabContent tab={tab} />
       </div>
     </div> 
   )
 }
+
+function TabContent({tab}){
+  let [fade, setFade] = useState('');
+
+  useEffect(()=>{
+    let a = setTimeout(()=>{ setFade('end'); }, 100)
+    return ()=>{
+      clearTimeout(a);
+      setFade('');
+    }
+  }, [tab])
+
+  return (<div className={`start ${fade}`}>
+    {[ <div>내용0</div>, <div>내용1</div>, <div>내용2</div> ][tab]}
+  </div>)
+  // if (tab == 0){
+  //   return <div>내용0</div>
+  // } else if (tab == 1){
+  //   return <div>내용1</div>
+  // } else if (tab == 2){
+  //   return <div>내용2</div>
+  // }
+}
+
 
 export default DetailPage;
