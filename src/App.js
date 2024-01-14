@@ -4,9 +4,13 @@ import './App.css';
 import data from './components/data.js';
 import DetailPage from './routes/Detail.js';
 import {Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom';
+import axios from 'axios';
 
 function App() {
-  let [shoes] = useState(data);
+  let [shoes, setShoes] = useState(data);
+  let [clickCount, setClickCount] = useState(1);
+  let [showMoreBtn, setShowMoreBtn] = useState(true);
+  let [loading, setLoading] = useState(false);
   let navigate = useNavigate();
 
   return (
@@ -28,8 +32,8 @@ function App() {
         <Route path="/" element={
           <>
           <div className="main-bg"></div>
-          <Container>
-            <Row>
+          <div className="container">
+            <div className="row">
               {
                 shoes.map((shoes, i)=>{
                   return (
@@ -37,8 +41,30 @@ function App() {
                   )
                 })
               }
-            </Row>
-          </Container>
+              {
+                loading == true ? <div>~로딩중~</div> : null
+              }
+              {
+                showMoreBtn == true
+                ? <button onClick={()=>{
+                  setLoading(true);
+                  setClickCount(clickCount + 1);
+                  axios.get(`https://codingapple1.github.io/shop/data${clickCount + 1}.json`)
+                  .then((result)=>{
+                      let newShoes = [...shoes, ...result.data];
+                      setShoes(newShoes);
+                      setLoading(false);
+                  })
+                  .catch(()=>{
+                    setLoading(false);
+                    setShowMoreBtn(false);
+                  })
+
+                }}>더 보기</button>
+                : null
+              }
+            </div>
+          </div>
           </>
         } />
         
@@ -59,6 +85,7 @@ function App() {
     </div>
   );
 }
+
 // Event 페이지
 function Event(){
   return (
@@ -83,14 +110,14 @@ function About(){
 function ProductItem(props){
   const shoes = props.shoes;
   return (
-      <Col>
-        <Link to={`/detail/${shoes.id}`}>
-          <img src={`https://codingapple1.github.io/shop/shoes${shoes.id + 1}.jpg`} width="100%" />
-          <h4>{shoes.title}</h4>
-          <h4>{shoes.price}</h4>
-          <h4>{shoes.content}</h4>
-          </Link>
-      </Col>
+    <div className="col-md-4">
+      <Link to={`/detail/${shoes.id}`}>
+        <img src={`https://codingapple1.github.io/shop/shoes${shoes.id + 1}.jpg`} width="100%" />
+        <h4>{shoes.title}</h4>
+        <h4>{shoes.price}</h4>
+        <h4>{shoes.content}</h4>
+      </Link>
+    </div>
   )
 }
 
