@@ -1,6 +1,25 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 
 function DetailPage(props){
+  let [visible, setVisible] = useState(true);
+  let [inputValue, setInputValue] = useState('');
+  
+  // input에 문자 입력시 alert
+  useEffect(()=>{
+    if (isNaN(inputValue)) {
+      alert('숫자만 입력하세요');
+    }
+  }, [inputValue])
+
+  // Event 팝업 2초 뒤에 꺼짐
+  useEffect(()=>{
+    const alertTimer = setTimeout(()=>{
+      setVisible(false);
+    }, 2000)
+
+    return ()=> clearTimeout(alertTimer); // 컴포넌트가 언마운트되면 clearTimeout을 호출해 메모리 누수 방지
+  }, []) // 두번째 인자로 빈 배열을 넣으면 마운트시 1회만 실행
 
   let {id} = useParams();
   const foundElement = props.shoes.find((element) => element.id == id);
@@ -8,11 +27,18 @@ function DetailPage(props){
 
   return (
     <div className="container">
+      {
+        visible == true
+        ? <div className="alert alert-warning">2초 이내 구매시 할인</div>
+        : null
+      }
+
       <div className="row">
         <div className="col-md-6">
           <img src="https://codingapple1.github.io/shop/shoes1.jpg" width="100%" />
         </div>
         <div className="col-md-6">
+          <span>수량: </span><input onChange={(e)=>{setInputValue(e.target.value)}}></input>
           <h4 className="pt-5">{foundElement.title}</h4>
           <p>{foundElement.content}</p>
           <p>{foundElement.price}원</p>

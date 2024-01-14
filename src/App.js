@@ -84,10 +84,12 @@ function ProductItem(props){
   const shoes = props.shoes;
   return (
       <Col>
-        <img src={`https://codingapple1.github.io/shop/shoes${shoes.id + 1}.jpg`} width="100%" />
-        <h4>{shoes.title}</h4>
-        <h4>{shoes.price}</h4>
-        <h4>{shoes.content}</h4>
+        <Link to={`/detail/${shoes.id}`}>
+          <img src={`https://codingapple1.github.io/shop/shoes${shoes.id + 1}.jpg`} width="100%" />
+          <h4>{shoes.title}</h4>
+          <h4>{shoes.price}</h4>
+          <h4>{shoes.content}</h4>
+          </Link>
       </Col>
   )
 }
