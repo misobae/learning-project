@@ -1,8 +1,9 @@
 import {useState} from "react";
-import {Navbar, Container, Nav, Row, Col} from 'react-bootstrap';
+import {Navbar, Container, Nav} from 'react-bootstrap';
 import './App.css';
 import data from './components/data.js';
 import DetailPage from './routes/Detail.js';
+import Cart from './routes/Cart.js';
 import {Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom';
 import axios from 'axios';
 
@@ -22,7 +23,8 @@ function App() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link onClick={()=>{navigate('/')}}>Home</Nav.Link>
-              <Nav.Link onClick={()=>{navigate('/detail')}}>Detail</Nav.Link>
+              <Nav.Link onClick={()=>{navigate('/detail/0')}}>Detail</Nav.Link>
+              <Nav.Link onClick={()=>{navigate('/cart')}}>Cart</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -69,6 +71,8 @@ function App() {
         } />
         
         <Route path="/detail/:id" element={<DetailPage shoes={shoes} />} />
+        
+        <Route path="/cart" element={<Cart />} />
         
         <Route path="/about" element={<About />}>
           <Route path="member" element={<div>Member</div>} />

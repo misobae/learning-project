@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem } from './../store.js';
 import {Nav} from 'react-bootstrap';
 
 function DetailPage(props){
@@ -7,7 +9,12 @@ function DetailPage(props){
   let [inputValue, setInputValue] = useState('');
   let [tab, setTab] = useState(0);
   let [fade, setFade] = useState('');
-  
+  let [cartBtnVisible, setCartBtnVisible] = useState(false);
+  let navigate = useNavigate();
+
+  let state = useSelector((state)=> state );  // Redux store 가져와줌
+  let dispatch = useDispatch(); // store.js로 요청 보내주는 함수
+
   // input에 문자 입력시 alert
   useEffect(()=>{
     if (isNaN(inputValue)) {
@@ -53,7 +60,15 @@ function DetailPage(props){
           <h4 className="pt-5">{foundElement.title}</h4>
           <p>{foundElement.content}</p>
           <p>{foundElement.price}원</p>
-          <button className="btn btn-danger">주문하기</button> 
+          <button className="btn btn-danger" onClick={()=>{
+            dispatch(addItem( { id: foundElement.id, name: foundElement.title, count: 1 } ));
+            setCartBtnVisible(true);
+          }}>주문하기</button>
+          {
+            cartBtnVisible == true
+            ? <button className="btn btn-primary" onClick={()=>{navigate('/cart')}}>장바구니 바로가기</button>
+            : null
+          }
         </div>
 
         <Nav variant="tabs"  defaultActiveKey="link0">
