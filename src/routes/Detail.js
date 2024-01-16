@@ -15,6 +15,31 @@ function DetailPage(props){
   let state = useSelector((state)=> state );  // Redux store 가져와줌
   let dispatch = useDispatch(); // store.js로 요청 보내주는 함수
 
+  let {id} = useParams();
+  const foundElement = props.shoes.find((element) => element.id == id);
+  // 현재 url에 입력한 번호와 같은 번호를 가진 상품을 찾아서 데이터 바인딩
+
+  let [watchedItem, setWatchedItem] = useState([]);
+
+  useEffect(()=>{
+    let watchedItemId = JSON.parse(localStorage.getItem('watchedId')); // JSON 자료를 array로 변환
+    let watchedItemTitle = JSON.parse(localStorage.getItem('watchedTitle'));
+
+    watchedItemId.push(foundElement.id);
+    watchedItemTitle.push(foundElement.title);
+
+    watchedItemId = new Set(watchedItemId); // 중복 제거 후
+    watchedItemId = Array.from(watchedItemId); // Set자료를 다시 Array에 담기
+    watchedItemTitle = new Set(watchedItemTitle); 
+    watchedItemTitle = Array.from(watchedItemTitle);
+
+    localStorage.setItem('watchedId', JSON.stringify(watchedItemId)); // 다시 JSON 형태로 저장
+    localStorage.setItem('watchedTitle', JSON.stringify(watchedItemTitle)); // 다시 JSON 형태로 저장
+
+    setWatchedItem(watchedItemTitle);
+  }, [])
+
+
   // input에 문자 입력시 alert
   useEffect(()=>{
     if (isNaN(inputValue)) {
@@ -39,12 +64,22 @@ function DetailPage(props){
     return ()=> clearTimeout(alertTimer); // 컴포넌트가 언마운트되면 clearTimeout을 호출해 메모리 누수 방지
   }, []) // 두번째 인자로 빈 배열을 넣으면 마운트시 1회만 실행
 
-  let {id} = useParams();
-  const foundElement = props.shoes.find((element) => element.id == id);
-  // 현재 url에 입력한 번호와 같은 번호를 가진 상품을 찾아서 데이터 바인딩
+
 
   return (
     <div className={`container start ${fade}`}>
+      <div className="viewed-products">
+        <strong>최근 본 상품</strong>
+        {
+          watchedItem.map((item, i)=>{
+            return(
+              <p key={i}>
+                {item}
+              </p>
+            )
+          })
+        }
+      </div>
       {
         visible == true
         ? <div className="alert alert-warning">2초 이내 구매시 할인</div>

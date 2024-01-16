@@ -1,3 +1,14 @@
+.viewed-products {
+  overflow: scroll;
+  position: fixed;
+  top: 56px;
+  right: 16px;
+  width: 150px;
+  height: 300px;
+  padding: 24px;
+  background: #fff6ad;
+  z-index: 1;
+}
 .start {
   opacity: 0;
 }

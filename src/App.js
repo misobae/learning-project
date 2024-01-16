@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Navbar, Container, Nav} from 'react-bootstrap';
 import './App.css';
 import data from './components/data.js';
@@ -13,6 +13,18 @@ function App() {
   let [showMoreBtn, setShowMoreBtn] = useState(true);
   let [loading, setLoading] = useState(false);
   let navigate = useNavigate();
+
+  const initializeLocalStorage = (key, defaultValue) => {
+    const value = localStorage.getItem(key);
+    if (value === null) {
+      localStorage.setItem(key, JSON.stringify(defaultValue));
+    }
+  }
+  useEffect(()=>{
+    // 값이 없을 경우 초기화
+    initializeLocalStorage('watchedId', []);
+    initializeLocalStorage('watchedTitle', []);
+  }, [])
 
   return (
     <div className="App">
