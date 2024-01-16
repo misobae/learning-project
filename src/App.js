@@ -1,11 +1,16 @@
-import {useEffect, useState} from "react";
+import {lazy, Suspense, useEffect, useState} from "react";
 import {Navbar, Container, Nav} from 'react-bootstrap';
 import './App.css';
 import data from './components/data.js';
-import DetailPage from './routes/Detail.js';
-import Cart from './routes/Cart.js';
 import {Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom';
 import axios from 'axios';
+
+// import DetailPage from './routes/Detail.js';
+// import Cart from './routes/Cart.js';
+
+// build 후, 첫 페이지 로딩속도 향상
+const DetailPage = lazy(() => import('./routes/Detail.js')); // lazy() -> 이 컴포넌트가 필요해지면 import
+const Cart = lazy(() => import('./routes/Cart.js'));
 
 function App() {
   let [shoes, setShoes] = useState(data);
@@ -41,7 +46,8 @@ function App() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      
+
+      <Suspense fallback={<div>loading...</div>}>
       <Routes>
         <Route path="/" element={
           <>
@@ -98,6 +104,7 @@ function App() {
 
         <Route path="*" element={<div>404</div>} />
       </Routes>
+      </Suspense>
     </div>
   );
 }
