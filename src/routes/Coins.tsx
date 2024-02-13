@@ -28,7 +28,8 @@ const Coin = styled.li `
   color: ${props => props.theme.bgColor};
   font-size: 24px;
   a {
-    display: block;
+    display: flex;
+    align-items: center;
     padding: 24px;
   }
   &:hover {
@@ -39,7 +40,12 @@ const Coin = styled.li `
 `;
 const Loader = styled.span`
   font-size: 24px;
-`
+`;
+const Img = styled.img`
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+`;
 
 interface CoinInterface {
   id: string,
@@ -53,16 +59,16 @@ interface CoinInterface {
 
 function Coins(){
   const [coins, setCoins] = useState<CoinInterface[]>([]);
-  const [loading, setLoaing] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getCoins = async() => {
-      const response = await axios(`https://api.coinpaprika.com/v1/coins`);
-      setCoins(response.data.slice(0, 100));
-      setLoaing(false);
-    };
-    getCoins();
-  }, [])
+    (async () => {
+      const response = await fetch("https://api.coinpaprika.com/v1/coins");
+      const json = await response.json();
+      setCoins(json.slice(0, 100));
+      setLoading(false);
+    })();
+  }, []);
   return (
     <Container>
       <Header>
@@ -74,7 +80,15 @@ function Coins(){
           <CoinList>
             {coins.map((coin) => (
               <Coin key={coin.id}>
-                <Link to={`/${coin.symbol}`}>{coin.name} &rarr;</Link>
+                <Link
+                  to={{
+                    pathname: `/${coin.id}`,
+                    state: { name: coin.name }
+                  }}
+                >
+                  <Img src={`https://static.coinpaprika.com/coin/${coin.id}/logo.png`} />
+                  {coin.name} &rarr;
+                </Link>
               </Coin>
             ))}
           </CoinList>
