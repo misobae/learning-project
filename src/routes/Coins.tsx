@@ -62,13 +62,13 @@ function Coins(){
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
-      const response = await fetch("https://api.coinpaprika.com/v1/coins");
-      const json = await response.json();
-      setCoins(json.slice(0, 100));
+    const getCoins = async() => {
+      const response = await axios(`https://api.coinpaprika.com/v1/coins`);
+      setCoins(response.data.slice(0, 100));
       setLoading(false);
-    })();
-  }, []);
+    };
+    getCoins();
+  }, [])
   return (
     <Container>
       <Header>
