@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  Link,
+  useLocation,
+  useParams,
+  useRouteMatch
+} from "react-router-dom";
 import styled from 'styled-components';
 import axios from 'axios';
+import Price from './Price';
+import Chart from './Chart';
 
 const Container = styled.div `
   max-width: 480px;
@@ -22,6 +31,44 @@ const Title = styled.h1`
 const Loader = styled.span`
   font-size: 24px;
 `;
+const Overview = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background-color: #2c2c2c;
+  border-radius: 16px;
+`;
+const OverviewItem = styled.div`
+  text-align: center;
+  span {
+    display: block;
+    &:first-child {
+      margin-bottom: 4px;
+    }
+  }
+`;
+const Description = styled.p`
+  margin: 24px 0;
+  line-height: 1.2;
+`
+const Tabs = styled.div`
+  display: flex;
+  margin-top: 48px;
+`
+const Tab = styled.div<{ isActive:boolean }>`
+  flex: 50% 0 0;
+  text-align: center;
+  a {
+    display: block;
+    background-color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor};
+    padding: 16px;
+    border-radius: 16px 16px 0 0;
+    color: ${props => props.theme.bgColor};
+    font-size: 20px;
+  }
+`
+
 interface RouteParams {
   coinId: string;
 }
@@ -88,6 +135,8 @@ function Coin(){
   const { state } = useLocation<RouteState>();
   const [info, setInfo] = useState<InfoData>();
   const [priceInfo, setPriceInfo] = useState<PriceData>();
+  const priceMatch = useRouteMatch("/:coinId/price");
+  const chartMatch = useRouteMatch("/:coinId/chart");
 
   useEffect(() => {
     const getCoin = async() => {
@@ -105,9 +154,59 @@ function Coin(){
   return (
     <Container>
       <Header>
-        <Title>{state?.name || "Loading..."}</Title>
+        <Title>
+        {state?.name ? state.name : loading ? "Loading..." : info?.name}  
+        </Title>
       </Header>
-      {loading ? <Loader>Loading ...</Loader> : null}
+      {loading ? (
+        <Loader>Loading ...</Loader>
+        ) : (
+        <>
+          <Overview>
+            <OverviewItem>
+              <span>Rank:</span>
+              <span>{info?.rank}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Symbol:</span>
+              <span>${info?.symbol}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Open Source:</span>
+              <span>{info?.open_source ? "Yes" : "No"}</span>
+            </OverviewItem>
+          </Overview>
+          <Description>{info?.description}</Description>
+          <Overview>
+            <OverviewItem>
+              <span>Total Suply:</span>
+              <span>{priceInfo?.total_supply}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Max Supply:</span>
+              <span>{priceInfo?.max_supply}</span>
+            </OverviewItem>
+          </Overview>
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to={`/${coinId}/chart`}>Chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null}>
+              <Link to={`/${coinId}/price`}>Price</Link>
+            </Tab>
+          </Tabs>
+
+          <Switch>
+            <Route path={`/${coinId}/price`}>
+              <Price />
+            </Route>
+            <Route path={`/${coinId}/chart`}>
+              <Chart />
+            </Route>
+          </Switch>
+        </>
+        )
+      }
     </Container>
   )
 }
