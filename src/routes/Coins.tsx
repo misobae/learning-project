@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
 import { fetchCoins } from '../api';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Container = styled.div `
   max-width: 480px;
@@ -63,9 +63,11 @@ function Coins(){
 
   return (
     <Container>
-      <Helmet>
-        <title>Coins</title>
-      </Helmet>
+      <HelmetProvider>
+        <Helmet>
+          <title>Coins</title>
+        </Helmet>
+      </HelmetProvider>
       <Header>
         <Title>Coins</Title>
       </Header>
