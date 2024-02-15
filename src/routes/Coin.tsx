@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   Switch,
   Route,
@@ -8,9 +7,10 @@ import {
   useRouteMatch
 } from "react-router-dom";
 import styled from 'styled-components';
-import axios from 'axios';
 import Price from './Price';
 import Chart from './Chart';
+import { useQuery } from 'react-query';
+import { fetchCoinInfo, fetchCoinTickers } from '../api';
 
 const Container = styled.div `
   max-width: 480px;
@@ -56,12 +56,12 @@ const Tabs = styled.div`
   display: flex;
   margin-top: 48px;
 `
-const Tab = styled.div<{ isActive:boolean }>`
+const Tab = styled.div<{ isactive:boolean }>`
   flex: 50% 0 0;
   text-align: center;
   a {
     display: block;
-    background-color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor};
+    background-color: ${props => props.isactive ? props.theme.accentColor : props.theme.textColor};
     padding: 16px;
     border-radius: 16px 16px 0 0;
     color: ${props => props.theme.bgColor};
@@ -130,32 +130,19 @@ interface PriceData {
 }
 
 function Coin(){
-  const [loading, setLoading] = useState(true);
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId));
+  const { isLoading: tickerLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId));
 
-  useEffect(() => {
-    const getCoin = async() => {
-      const infoData = await axios(`https://api.coinpaprika.com/v1/coins/${coinId}`);
-
-      const priceData = await axios(`https://api.coinpaprika.com/v1/tickers/${coinId}`);
-
-      setInfo(infoData.data);
-      setPriceInfo(priceData.data);
-      setLoading(false);
-    };
-    getCoin();
-  }, [])
-  
+  const loading = infoLoading || tickerLoading;
   return (
     <Container>
       <Header>
         <Title>
-        {state?.name ? state.name : loading ? "Loading..." : info?.name}  
+        {state?.name ? state.name : loading ? "Loading..." : infoData?.name}  
         </Title>
       </Header>
       {loading ? (
@@ -165,33 +152,33 @@ function Coin(){
           <Overview>
             <OverviewItem>
               <span>Rank:</span>
-              <span>{info?.rank}</span>
+              <span>{infoData?.rank}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Symbol:</span>
-              <span>${info?.symbol}</span>
+              <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Open Source:</span>
-              <span>{info?.open_source ? "Yes" : "No"}</span>
+              <span>{infoData?.open_source ? "Yes" : "No"}</span>
             </OverviewItem>
           </Overview>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
               <span>Total Suply:</span>
-              <span>{priceInfo?.total_supply}</span>
+              <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{priceInfo?.max_supply}</span>
+              <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
           <Tabs>
-            <Tab isActive={chartMatch !== null}>
+            <Tab isactive={chartMatch !== null}>
               <Link to={`/${coinId}/chart`}>Chart</Link>
             </Tab>
-            <Tab isActive={priceMatch !== null}>
+            <Tab isactive={priceMatch !== null}>
               <Link to={`/${coinId}/price`}>Price</Link>
             </Tab>
           </Tabs>
