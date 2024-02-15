@@ -55,18 +55,24 @@ const Description = styled.p`
 `
 const Tabs = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 48px;
 `
 const Tab = styled.div<{ isactive:boolean }>`
-  flex: 50% 0 0;
+  flex: 48% 0 0;
   text-align: center;
   a {
     display: block;
     background-color: ${props => props.isactive ? props.theme.accentColor : props.theme.textColor};
     padding: 16px;
-    border-radius: 16px 16px 0 0;
+    border-radius: 16px;
     color: ${props => props.theme.bgColor};
     font-size: 20px;
+    transition: background-color .3s;
+    &:hover {
+      background-color: ${props => props.theme.accentColor};
+    }
   }
 `
 
