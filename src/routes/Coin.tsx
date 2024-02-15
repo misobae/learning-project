@@ -6,6 +6,7 @@ import {
   useParams,
   useRouteMatch
 } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import styled from 'styled-components';
 import Price from './Price';
 import Chart from './Chart';
@@ -143,6 +144,11 @@ function Coin(){
   const loading = infoLoading || tickerLoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
         {state?.name ? state.name : loading ? "Loading..." : infoData?.name}  
