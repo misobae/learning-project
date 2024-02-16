@@ -7,11 +7,12 @@ import {
   useRouteMatch
 } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import styled from 'styled-components';
-import Price from './Price';
-import Chart from './Chart';
 import { useQuery } from 'react-query';
 import { fetchCoinInfo, fetchCoinTickers } from '../api';
+import styled from 'styled-components';
+
+import Price from './Price';
+import Chart from './Chart';
 
 const Container = styled.div `
   max-width: 480px;
@@ -147,6 +148,7 @@ interface PriceData {
   };
 }
 
+
 function Coin(){
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
@@ -213,7 +215,7 @@ function Coin(){
 
           <Switch>
             <Route path={`/${coinId}/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
             <Route path={`/${coinId}/chart`}>
               <Chart coinId={coinId} />
