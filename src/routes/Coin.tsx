@@ -37,13 +37,14 @@ const Overview = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 16px 40px;
-  background-color: #2c2c2c;
+  background-color: ${props => props.theme.textColor};
   border-radius: 16px;
 `;
 const OverviewItem = styled.div`
   text-align: center;
   span {
     display: block;
+    color: ${props => props.theme.bgColor};
     &:first-child {
       margin-bottom: 4px;
     }
@@ -142,10 +143,7 @@ function Coin(){
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId));
-  const { isLoading: tickerLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId),
-  {
-    refetchInterval: 5000,
-  });
+  const { isLoading: tickerLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId));
 
   const loading = infoLoading || tickerLoading;
   return (
