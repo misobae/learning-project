@@ -25,6 +25,7 @@ const Header = styled.header `
   height: 10vh;
 `;
 const Title = styled.h1`
+  margin: 0 auto;
   color: ${props => props.theme.textColor};
   font-size: 48px;
   font-weight: bold;
@@ -53,13 +54,13 @@ const OverviewItem = styled.div`
 const Description = styled.p`
   margin: 24px 0;
   line-height: 1.2;
-`
+`;
 const Tabs = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 48px;
-`
+`;
 const Tab = styled.div<{ isactive:boolean }>`
   flex: 48% 0 0;
   text-align: center;
@@ -75,7 +76,16 @@ const Tab = styled.div<{ isactive:boolean }>`
       background-color: ${props => props.theme.accentColor};
     }
   }
-`
+`;
+const BtnBack = styled.div`
+  transition: transform .25s;
+  &:hover {
+   transform : translateX(-6px);
+  }
+  a {
+    font-size: 40px;
+  }
+`;
 
 interface RouteParams {
   coinId: string;
@@ -156,8 +166,11 @@ function Coin(){
         </Helmet>
       </HelmetProvider>
       <Header>
+        <BtnBack>
+          <Link to={{pathname: `/`}}>&larr;</Link>
+        </BtnBack>
         <Title>
-        {state?.name ? state.name : loading ? "Loading..." : infoData?.name}  
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}  
         </Title>
       </Header>
       {loading ? (
