@@ -18,6 +18,14 @@ interface ChartProps {
 function Chart({ coinId }: ChartProps){
   const {isLoading, data} = useQuery<IHistorical[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
 
+  const exceptData = data ?? [];
+  const chartData = exceptData?.map((i) => {
+    return {
+      x: i.time_close,
+      y: [i.open, i.high, i.low, i.close]
+    }
+  })
+
   return (
     <div>
       {
@@ -25,11 +33,11 @@ function Chart({ coinId }: ChartProps){
         "Loading..."
       ) : (
       <ApexCharts
-          type="line"
+          type="candlestick"
           series={[
             {
               name: "Price",
-              data: data?.map(price => Number(price.close)) ?? [],
+              data: chartData,
             }
           ]} 
           options={{
@@ -53,14 +61,6 @@ function Chart({ coinId }: ChartProps){
               type: "datetime",
               categories: data?.map(price => new Date(price.time_close * 1000).toUTCString()),
             },
-            fill: {
-              type: "gradient",
-              gradient: {
-                gradientToColors: ["#0be881"],
-                stops: [0, 100]
-              }
-            },
-             colors: ["#0fbcf9"],
              tooltip: {
               y: {
                 formatter: (value) => `${value.toFixed(2)}`
