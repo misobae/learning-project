@@ -1,8 +1,94 @@
+import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Categories, categoryState, toDoSelector, catsState } from "./atoms";
 import { useForm } from "react-hook-form";
+import styled from "styled-components";
+
 import CreateToDo from "./CreateToDo";
 import ToDo from "./ToDo";
+
+interface SelectBtnProps {
+  isopen: boolean; // isopen props의 타입을 정의
+}
+
+const Wrapper = styled.div`
+  max-width: 800px;
+  width: 90%;
+  margin: 24px auto;
+`;
+
+const SelectBox = styled.div`
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  `;
+
+const SelectBtn = styled.div<SelectBtnProps>`
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 28px;
+  font-weight: 600;
+  &::before {
+    content: '►';
+    margin-right: 0.5em;
+    font-size: 0.75em;
+    transition: .25s;
+    transform: rotate(${({ isopen }) => isopen ? '90deg' : '0'});
+  }
+`;
+
+const OptionList = styled.ul<SelectBtnProps>`
+  overflow-y: scroll;
+  position: absolute;
+  top: 41px;
+  left: 0;
+  width: 100%;
+  max-height: ${({ isopen }) => isopen ? '132px' : '0'};
+  border: ${({ isopen }) => isopen ? '2px solid #000' : '0'};
+  background-color: ${({ isopen }) => isopen ? '#fff' : 'transparent'};
+  border-radius: 16px;
+  transition: .3s ease-in;
+  list-style: none;
+`;
+
+const Option = styled.li`
+  padding: 0.25em 0.75em;
+  font-size: 22px;
+  &:hover {
+    background-color: #f3f3f3;
+  }
+  &:last-child:hover {
+    background-color: transparent;
+  }
+`;
+
+const AddBox = styled.div`
+  margin: 16px 0;
+`;
+const AddCatInput = styled.input`
+  display: block;
+  width: calc(100% - 8px);
+  padding: 8px 4px;
+  border: 0;
+  border-bottom: 1px solid #999;
+  font-size: 16px;
+  &:focus {
+    outline: none;
+  }
+`;
+const AddBtn = styled.button`
+    display: block;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+    border: 2px solid #000;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 28px;
+    transition: .3s;
+    cursor: pointer;
+`;
 
 interface IForm {
   categoryName: string;
@@ -15,10 +101,8 @@ function ToDoList(){
   const [category, setCategory] = useRecoilState(categoryState);
   const [customCats, setCustomCats] = useRecoilState(catsState);
   const { handleSubmit, register, setValue } = useForm<IForm>();
-
-  const handleChangeCat = (event: React.FormEvent<HTMLSelectElement>) => {
-    setCategory(event.currentTarget.value as any);
-  };
+  const [isopen, setOpen] = useState(false);
+  const [showInput, setShowInput] = useState(false);
 
 	const handleAddCat = ({ categoryName }: IForm) => {
     setCustomCats((oldCats) => [
@@ -32,37 +116,65 @@ function ToDoList(){
 		setValue("categoryName", "");
 	};
 
-  return (
-    <div>
-      <h1>To Dos</h1>
-      <hr />
-      <form onSubmit={handleSubmit(handleAddCat)}>
-        <select value={category} onChange={handleChangeCat}>
-          <option value={Categories.TO_DO}>To Do</option>
-          <option value={Categories.DOING}>Doing</option>
-          <option value={Categories.DONE}>Done</option>
-          {customCats.map((customCat) => (
-            <option key={customCat.id} value={customCat.text}>
-              {customCat.text}
-            </option>
-          ))}
-        </select>
+  const handleSelectCat = (category: Categories | string) => {
+    setCategory(category as Categories);
+    setOpen(false);
+  };
 
-        <input
-          {...register("categoryName", {
-            required: "Please, write a category!",
-          })}
-          placeholder="Write a category."
-        />
-        <button name="newCat">NEW</button>
-      </form>
+  const toggleDropDown = () => {
+    setOpen(!isopen);
+  }
+
+  const handleShowInput = () => {
+    setShowInput(!showInput);
+  }
+
+  return (
+    <Wrapper>
+        <SelectBox className={isopen ? "isopen" : ""}>
+          <SelectBtn
+            onClick={toggleDropDown}
+            isopen={isopen}>
+              {category}
+          </SelectBtn>
+          <OptionList isopen={isopen}>
+            <Option onClick={() => handleSelectCat(Categories.TO_DO)}>To Do</Option>
+            <Option onClick={() => handleSelectCat(Categories.DOING)}>Doing</Option>
+            <Option onClick={() => handleSelectCat(Categories.DONE)}>Done</Option>
+
+            {customCats.map((customCat) => (
+              <Option key={customCat.id} onClick={() => handleSelectCat(customCat.text)}>
+                {customCat.text}
+              </Option>
+            ))}
+
+            <Option>
+              <AddBox>
+                {showInput ? (
+                  <form onSubmit={handleSubmit(handleAddCat)}>
+                    <AddCatInput
+                      {...register("categoryName", {
+                        required: "Please, write a category!",
+                      })}
+                      placeholder="Click here and write a new category."
+                      type="text"
+                    />
+                  </form>
+                ) : (
+                  <AddBtn onClick={handleShowInput}>+</AddBtn>
+                )}
+              </AddBox>
+            </Option>
+            
+          </OptionList>
+        </SelectBox>
 
       <CreateToDo />
       {toDos?.map((toDo) => (
         <ToDo key={toDo.id} {...toDo} />
       ))}
       {}
-    </div>
+    </Wrapper>
   );
 }
 
