@@ -44,5 +44,8 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://misobae.github.io/study-react__todo-app"
+  "homepage": "https://misobae.github.io/study-react__todo-app",
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
+  }
 }
