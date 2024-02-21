@@ -8,7 +8,7 @@ import CreateToDo from "./CreateToDo";
 import ToDo from "./ToDo";
 
 interface SelectBtnProps {
-  isopen: boolean; // isopen props의 타입을 정의
+  isopen: boolean;
 }
 
 const Wrapper = styled.div`
@@ -21,7 +21,7 @@ const SelectBox = styled.div`
   position: relative;
   width: 100%;
   cursor: pointer;
-  `;
+`;
 
 const SelectBtn = styled.div<SelectBtnProps>`
   display: flex;
@@ -41,6 +41,7 @@ const SelectBtn = styled.div<SelectBtnProps>`
 const OptionList = styled.ul<SelectBtnProps>`
   overflow-y: scroll;
   position: absolute;
+  z-index: 1;
   top: 41px;
   left: 0;
   width: 100%;
@@ -78,16 +79,21 @@ const AddCatInput = styled.input`
   }
 `;
 const AddBtn = styled.button`
-    display: block;
-    width: 48px;
-    height: 48px;
-    margin: 0 auto;
-    border: 2px solid #000;
-    background: transparent;
-    border-radius: 10px;
-    font-size: 28px;
-    transition: .3s;
-    cursor: pointer;
+  display: block;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  border: 2px solid #000;
+  background: transparent;
+  border-radius: 10px;
+  font-size: 28px;
+  transition: .3s;
+  cursor: pointer;
+`;
+
+const ErrorMsg = styled.span`
+  font-size: 14px;
+  color: #f23333;
 `;
 
 interface IForm {
@@ -100,7 +106,11 @@ function ToDoList(){
   const toDos = useRecoilValue(toDoSelector);
   const [category, setCategory] = useRecoilState(categoryState);
   const [customCats, setCustomCats] = useRecoilState(catsState);
-  const { handleSubmit, register, setValue } = useForm<IForm>();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    setValue } = useForm<IForm>();
   const [isopen, setOpen] = useState(false);
   const [showInput, setShowInput] = useState(false);
 
@@ -155,10 +165,15 @@ function ToDoList(){
                     <AddCatInput
                       {...register("categoryName", {
                         required: "Please, write a category!",
+                        maxLength: {
+                          value: 15,
+                          message: "Please name the category within 15 characters.",
+                        },
                       })}
                       placeholder="Click here and write a new category."
                       type="text"
                     />
+                    <ErrorMsg>{errors?.categoryName?.message}</ErrorMsg>
                   </form>
                 ) : (
                   <AddBtn onClick={handleShowInput}>+</AddBtn>
@@ -170,10 +185,13 @@ function ToDoList(){
         </SelectBox>
 
       <CreateToDo />
-      {toDos?.map((toDo) => (
-        <ToDo key={toDo.id} {...toDo} />
-      ))}
-      {}
+      
+      <ul>
+        {toDos?.map((toDo) => (
+          <ToDo key={toDo.id} {...toDo} />
+        ))}
+      </ul>
+
     </Wrapper>
   );
 }
