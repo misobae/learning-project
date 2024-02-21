@@ -44,7 +44,7 @@ const OptionList = styled.ul<SelectBtnProps>`
   top: 41px;
   left: 0;
   width: 100%;
-  max-height: ${({ isopen }) => isopen ? '132px' : '0'};
+  max-height: ${({ isopen }) => isopen ? '186px' : '0'};
   border: ${({ isopen }) => isopen ? '2px solid #000' : '0'};
   background-color: ${({ isopen }) => isopen ? '#fff' : 'transparent'};
   border-radius: 16px;
@@ -53,7 +53,7 @@ const OptionList = styled.ul<SelectBtnProps>`
 `;
 
 const Option = styled.li`
-  padding: 0.25em 0.75em;
+  padding: 0.45em 0.75em;
   font-size: 22px;
   &:hover {
     background-color: #f3f3f3;
@@ -64,7 +64,7 @@ const Option = styled.li`
 `;
 
 const AddBox = styled.div`
-  margin: 16px 0;
+  margin: 8px 0;
 `;
 const AddCatInput = styled.input`
   display: block;
@@ -165,7 +165,7 @@ function ToDoList(){
                 )}
               </AddBox>
             </Option>
-            
+
           </OptionList>
         </SelectBox>
 
