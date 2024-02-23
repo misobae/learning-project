@@ -29,82 +29,133 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const Wrapper = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
+const Wrapper = styled.div`
   height: 100vh;
-  background-color: #85FFBD;
-  background-image: linear-gradient(45deg, rgb(136, 255, 191) 0%, rgb(255, 251, 125) 100%);
+  width: 100vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: center;
+  background-color: #FBAB7E;
+  background-image: linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%);
+`;
+
+const ButtonWrap = styled.div`
+  flex-basis: 100%;
+  margin-top: 36px;
+  text-align: center;
+`;
+
+const Button = styled(motion.button)`
+  padding: 6px 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 0;
+  font-size: 18px;
+  cursor: pointer;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 `;
 
 const Box = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 100px;
-  width: 400px;
-  height: 300px;
-  background-color: #fff;
+  width: 250px;
+  height: 250px;
+  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 32px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
-const sliderVar = {
-  entry: (back: boolean) => {
-    return {
-      x: back ? -500 : 500,
-      opacity: 0,
-      scale: 0
-    }
+const Circle = styled(motion.div)`
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+`;
+
+const Overlay = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 20%);
+`
+
+const btnVars = {
+  big: {
+    scale: 1.15,
+    backgroundColor: "#F7CE68"
   },
-  center: {
-    x: 0,
-    opacity: 1,
-    scale: 1
-  },
-  exit: (back: boolean) => {
-    return {
-      x: back ? 500 : -500,
-      opacity: 0,
-      scale: 0,
-      transition: { duration: 1 }
-    }
+  small: {
+    scale: 1,
+    backgroundColor: "#FBAB7E"
   }
 }
 
+const boxStyles = [
+  { transformOrigin: "bottom right" },
+  { transformOrigin: "bottom left" },
+  { transformOrigin: "top right" },
+  { transformOrigin: "top left" }
+];
 
 function App() {
-  const [visible, setVisible] = useState(1);
-  const [back, setBack] = useState(false);
-  const nextPlease = () => {
-    setBack(false);
-    setVisible((prev) => prev === 9 ? 9 : prev + 1);
-  }
-  const prevPlease = () => {
-    setBack(true);
-    setVisible((prev) => prev === 1 ? 1 : prev - 1);
-  }
+  const [switched, setSwitched] = useState(false);
+  const [id, setId] = useState<null | string>(null);
+
   return (
     <>
       <GlobalStyle />
       <Wrapper>
-        <AnimatePresence custom={back}>
-          <Box
-            key={visible}
-            custom={back}
-            variants={sliderVar}
-            initial="entry"
-            animate="center"
-            exit="exit"
+        <Grid>
+          {[1, 2, 3, 4].map((n) => (
+            <Box
+              key={n}
+              layoutId={`${n}`}
+              onClick={() => setId(n + "")}
+              whileHover={{ scale: 1.1 }}
+              style={{ ...boxStyles[n - 1] }}
             >
-              {visible}
-            </Box> 
+              {(n === 2) && (
+                switched ? <Circle
+                  layoutId="circle"
+                  style={{ backgroundColor: "#F7CE68" }}
+                /> : null
+              )}
+              {(n === 3) && (
+                !switched ? <Circle
+                  layoutId="circle"
+                  style={{ backgroundColor: "#FBAB7E" }}
+                /> : null
+              )}
+            </Box>
+          ))}
+        </Grid>
+        <AnimatePresence>
+          {id ? <Overlay
+            onClick={() => setId(null)}
+            initial={{backgroundColor: "rgba(0, 0, 0, 0)"}}
+            animate={{backgroundColor: "rgba(0, 0, 0, 0.7)"}}
+            exit={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
+              <Box layoutId={`${id}`} style={{width: 400, height: 300, backgroundColor: "#fff"}} />
+            </Overlay> : null}
         </AnimatePresence>
-        <button onClick={prevPlease}>Prev</button>
-        <button onClick={nextPlease}>Next</button>
+        <ButtonWrap>
+          <Button
+            onClick={() => setSwitched(prev => !prev)}
+            variants={btnVars}
+            animate={switched ? "big" : "small"}
+            >Switch !</Button>
+        </ButtonWrap>
       </Wrapper>
     </>
   );
