@@ -53,6 +53,25 @@ const Box = styled(motion.div)<{ bgphoto : string }>`
   background: url(${props => props.bgphoto}) no-repeat center / cover;
   color: red;
   font-size: 50px;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
+`;
+
+const Info = styled(motion.div)`
+  opacity: 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  background-color: ${props => props.theme.black.lighter};
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
 `;
 
 const rowVariants = {
@@ -64,6 +83,32 @@ const rowVariants = {
   },
   exit: {
     x: -window.outerWidth - 5,
+  }
+}
+
+const boxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -50,
+    transition: {
+      delay: 0.35,
+      duration: 0.3,
+      type: "tween",
+    }
+  },
+}
+
+const infoVariants = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay: 0.35,
+      duration: 0.3,
+      type: "tween",
+    }
   }
 }
 
@@ -118,7 +163,15 @@ function Home(){
                     <Box
                       key={movie.id}
                       bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                    />
+                      variants={boxVariants}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: "tween" }}>
+                        {/* 부모 요소에 있는 prop은 자동적으로 자식에게 상속됨 */}
+                      <Info variants={infoVariants}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </Box>
                   ))
                 }
               </Row>
