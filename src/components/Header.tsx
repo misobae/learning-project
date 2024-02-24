@@ -110,7 +110,7 @@ function Header() {
   const tvMatch = useMatch("tv");
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
-  const { scrollY, scrollYProgress } = useScroll();
+  const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", () => {
     if (scrollY.get() > 80){
