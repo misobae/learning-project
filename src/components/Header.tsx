@@ -1,7 +1,8 @@
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { motion, useAnimation, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -26,8 +27,7 @@ const Logo = styled(motion.svg)`
   height: 25px;
   fill: ${(props) => props.theme.red};
   path {
-    stroke-width: 6px;
-    stroke: white;
+    stroke-width: 0;
   }
 `;
 
@@ -61,7 +61,7 @@ const Circle = styled(motion.span)`
   border-radius: 50%;
 `;
 
-const Search = styled.span`
+const Search = styled.form`
   position: relative;
   display: flex;
   align-items: center;
@@ -104,6 +104,10 @@ const navVariants = {
   }
 }
 
+interface IForm {
+  keyword: string;
+}
+
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
@@ -120,6 +124,11 @@ function Header() {
     }
   })
 
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm<IForm>();
+  const onValid = (data: IForm) => {
+    navigate(`search?keyword=${data.keyword}`);
+  }
 
   const toggleSearch = () => {
     if (searchOpen) {
@@ -166,7 +175,7 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -185 : 0 }}
@@ -182,11 +191,16 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
-              placeholder="Search for movie or tv show..."
-              initial={{ scaleX: 0 }}
-              animate={inputAnimation}
-              transition={{ type: "linear" }}
-            />
+            {...register("keyword",
+              { required: true,
+                minLength: 1
+              })
+            }
+            placeholder="Search for movie or tv show..."
+            initial={{ scaleX: 0 }}
+            animate={inputAnimation}
+            transition={{ type: "linear" }}
+          />
         </Search>
       </Col>
     </Nav>
