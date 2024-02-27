@@ -98,9 +98,7 @@ function Carousel({ data, title, menuName, category }: SliderProps) {
       {movieMatch ? (
         <DetailModal
           data={data}
-          movieId={Number(movieMatch.params.id)}
           movieMatch={movieMatch}
-          category={category}
         />
       ) : null}
     </>

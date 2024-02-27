@@ -57,16 +57,13 @@ const Info = styled.div`
 // ------ interface ------ //
 interface DetailProps {
   data: IGetMoviesResult | null;
-  movieId: number;
   movieMatch: PathMatch<string> | null;
-  category: string;
 }
 
-function DetailModal({ data, movieId, movieMatch, category }: DetailProps){
+function DetailModal({ data, movieMatch }: DetailProps){
   const navigate = useNavigate();
   const onOverlayClick = () => navigate("/");
   const clickedMovie = movieMatch?.params.id && data?.results.find(movie => String(movie.id) === movieMatch.params.id);
-  console.log(clickedMovie);
 
   return (
     <Overlay
