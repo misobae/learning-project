@@ -10,7 +10,9 @@ export interface IMovie {
   release_date: string;
   original_name: string;
   first_air_date: string;
+  name?: string;
 }
+
 export interface IGetMoviesResult {
   dates: {
     maximum: string;
@@ -34,35 +36,14 @@ export function getTvSeries(lists: string){
   );
 }
 
-
-interface ISearchResult {
-  id: number;
-  name?: string;
-  title?: string;
-  backdrop_path: string;
-  poster_path: string;
-  vote_average: number;
-  overview: string;
-  original_title: string;
-  release_date?: string;
-  first_air_date?: string;
-}
-
-export interface IGetSearch {
-  page: number;
-  results: ISearchResult[];
-  total_pages: number;
-  total_results: number;
-  dates: string;
-}
-export function getSearchMovie(keyword: string) {
+export function getSearchMovie(keyword: string | null) {
   return fetch(
     `${BASE_PATH}/search/movie?api_key=${API_KEY}&language=en-US&query=${keyword}&page=1`
   ).then(response => {
     return response.json();
   });
 }
-export function getSearchTv(keyword: string) {
+export function getSearchTv(keyword: string | null) {
   return fetch(
     `${BASE_PATH}/search/tv?api_key=${API_KEY}&language=en-US&query=${keyword}&page=1&include_adult=false`
   ).then(response => {

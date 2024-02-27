@@ -4,7 +4,6 @@ import Tv from './routes/Tv';
 import Search from './routes/Search';
 import Header from './components/Header';
 
-
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +15,7 @@ function App() {
         <Route path="tv" element={<Tv />} />
         <Route path="tv/:category/:id" element={<Tv />} />
         <Route path="search" element={<Search />} />
+        <Route path="search/:menuName/:id" element={<Search />} />
       </Routes>
     </BrowserRouter>
   );
