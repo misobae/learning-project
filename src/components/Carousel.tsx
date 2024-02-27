@@ -1,13 +1,13 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useMatch, useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../slickStyle.css";
 import { IGetMoviesResult } from "../api/movieApi";
 import { makeImagePath } from "../utils";
-
+import DetailModal from "./DetailModal";
 
 // ------ Styled ------ //
 const SliderWrap = styled.div`
@@ -39,8 +39,6 @@ const Box = styled(motion.div)<{ bgphoto : string }>`
   position: relative;
   height: 200px;
   background: url(${props => props.bgphoto}) no-repeat center / cover;
-  color: red;
-  font-size: 50px;
   cursor: pointer;
   transition: .35s;
   &:hover {
@@ -52,19 +50,21 @@ const Box = styled(motion.div)<{ bgphoto : string }>`
   }
 `;
 
-
-// ------ types ------ //
+// ------ interface ------ //
 interface SliderProps {
   data: IGetMoviesResult | null;
   title: string;
+  menuName: string;
+  category: string;
 }
 
-
-function Carousel({ data, title }: SliderProps) {
+function Carousel({ data, title, menuName, category }: SliderProps) {
   const navigate = useNavigate();
-  const onBoxClicked = (movieId:number) => {
-    navigate(`movies/${movieId}`);
+  const onBoxClicked = (movieId: number) => {
+    navigate(`${menuName}/${category}/${movieId}`);
   }
+
+  const movieMatch = useMatch(`/${menuName}/${category}/:id`);
 
   const sliderSettings = {
     dots: true,
@@ -78,20 +78,31 @@ function Carousel({ data, title }: SliderProps) {
     <>
       <SliderWrap>
         <SliderTitle>{title}</SliderTitle>
-        <Slider {...sliderSettings}>
-          {data?.results.map((movie) => (
-            <Box
-              key={movie.id}
-              onClick={() => onBoxClicked(movie.id)}
-              bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-            >
-              <Info>
-                <h4>{movie.title}</h4>
-              </Info>
-            </Box> ))
-          }
-        </Slider>
+        <AnimatePresence>
+          <Slider {...sliderSettings}>
+            {data && data.results && data.results.map((movie) => (
+              <Box
+                key={category + movie.id}
+                onClick={() => onBoxClicked(movie.id)}
+                bgphoto={makeImagePath(movie.backdrop_path, "w500")}
+              >
+                <Info>
+                  <h4>{movie.title}</h4>
+                </Info>
+              </Box> ))
+            }
+          </Slider>
+        </AnimatePresence>
       </SliderWrap>
+      
+      {movieMatch ? (
+        <DetailModal
+          data={data}
+          movieId={Number(movieMatch.params.id)}
+          movieMatch={movieMatch}
+          category={category}
+        />
+      ) : null}
     </>
   )
 }
