@@ -61,6 +61,7 @@ interface SliderProps {
 function Carousel({ data, title, menuName, category }: SliderProps) {
   const navigate = useNavigate();
   const onBoxClicked = (movieId: number) => {
+    if (menuName === "tv" ) return navigate(`${category}/${movieId}`);
     navigate(`${menuName}/${category}/${movieId}`);
   }
 
@@ -87,7 +88,10 @@ function Carousel({ data, title, menuName, category }: SliderProps) {
                 bgphoto={makeImagePath(movie.backdrop_path, "w500")}
               >
                 <Info>
-                  <h4>{movie.title}</h4>
+                  <h4>
+                    {menuName === "tv" ? movie.original_name : movie.title}
+                  </h4>
+                    
                 </Info>
               </Box> ))
             }
@@ -99,6 +103,7 @@ function Carousel({ data, title, menuName, category }: SliderProps) {
         <DetailModal
           data={data}
           movieMatch={movieMatch}
+          menuName={menuName}
         />
       ) : null}
     </>

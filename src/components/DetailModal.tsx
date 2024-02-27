@@ -58,13 +58,20 @@ const Info = styled.div`
 interface DetailProps {
   data: IGetMoviesResult | null;
   movieMatch: PathMatch<string> | null;
+  menuName: string;
 }
 
-function DetailModal({ data, movieMatch }: DetailProps){
+function DetailModal({ data, movieMatch, menuName }: DetailProps){
   const navigate = useNavigate();
-  const onOverlayClick = () => navigate("/");
+  const onOverlayClick = () => {
+    if(menuName === 'tv') {
+      navigate("/tv");
+    } else {
+      navigate("/");
+    }
+  }
   const clickedMovie = movieMatch?.params.id && data?.results.find(movie => String(movie.id) === movieMatch.params.id);
-
+  
   return (
     <Overlay
       onClick={onOverlayClick}
@@ -79,7 +86,12 @@ function DetailModal({ data, movieMatch }: DetailProps){
           <ModalDetail>
             <Poster style={{ background: `url(${makeImagePath(clickedMovie.poster_path, "w500" )}) no-repeat center / contain`}} />
             <Info>
-              <h3>{clickedMovie.title} ({clickedMovie.release_date.slice(0, 4)})</h3>
+              {menuName === 'tv' ? (
+                <h3>{clickedMovie.original_name} ({clickedMovie.first_air_date.slice(0, 4)})</h3>
+              ) : (
+                <h3>{clickedMovie.title} ({clickedMovie.release_date.slice(0, 4)})</h3>
+              )}
+
               <p>{clickedMovie.overview}</p>
             </Info>
           </ModalDetail>
