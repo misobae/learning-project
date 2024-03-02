@@ -1,0 +1,15 @@
+body {
+  overflow-x: hidden;
+}
+.slick-list {
+  overflow: initial;
+}
+.slick-prev, .slick-next {
+  z-index: 1;
+}
+.slick-prev {
+  left: 24px;
+}
+.slick-next {
+  right: 24px;
+}
