@@ -1,0 +1,10 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+    "outDir": "build",
+    "target": "ES6",
+    "lib": ["ES6", "DOM",], // 어떤 API를 사용하고 어떤 환경에서 코드를 실행하는 지를 지정
+    "strict": true,
+    "allowJs": true
+  }
+}
