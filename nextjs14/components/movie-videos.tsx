@@ -1,4 +1,4 @@
-import { API_URL } from "../(home)/page";
+import { API_URL } from "../app/(home)/page";
 
 async function getVideos(id:string) {
   console.log(`Fetching videos: ${Date.now()}`);
