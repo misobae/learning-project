@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import styles from "../styles/navigation.module.css";
 
 export default function Navigation() {
   const path = usePathname();
   
   return (
-    <nav>
+    <nav className={styles.nav}>
       <ul>
         <li>
           {/* Link 컴포넌트는 Client Side Only Navigation을 수행하기 때문에 새로고침이 되지 않음.

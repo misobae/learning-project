@@ -1,13 +1,12 @@
 import { Suspense } from "react";
-import MovieInfo from "../../../components/movie-info";
-import MovieVideos from "../../../components/movie-videos";
+import MovieInfo from "../../../../components/movie-info";
+import MovieVideos from "../../../../components/movie-videos";
 
 // 파일 또는 폴더명을 [] 대괄호 안에 넣어주면 동적 URL을 사용할 수 있음
 export default function MovieDetail({ params: { id } }: { params: { id: string } }) {
   
   return (
     <>
-      <h2>Movie Detail Page</h2>
       {/* 
         Streaming: 경로를 더 작은 "청크"로 나누고, 준비가 되면 서버에서 클라이언트로 점진적으로 스트리밍할 수 있는 데이터 전송 기술
 
