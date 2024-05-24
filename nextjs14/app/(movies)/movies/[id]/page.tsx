@@ -1,10 +1,22 @@
 import { Suspense } from "react";
-import MovieInfo from "../../../../components/movie-info";
+import MovieInfo, { getMovie } from "../../../../components/movie-info";
 import MovieVideos from "../../../../components/movie-videos";
 
+interface IParams {
+  params: { id: string };
+}
+// generateMetadata: 동적인 제목을 갖고 있는 페이지에서 metadata 설정 시 사용
+// 프레임워크가 이 함수를 호출 시키기 위해 export 해야 함!
+export async function generateMetadata({ params: {id} }: IParams) {
+  // Next.js는 fetch한 데이터를 캐싱하기 때문에 캐시된 응답을 받을 수 있음
+  const movie = await getMovie(id);
+  return {
+    title: movie.title,
+  }
+}
+
 // 파일 또는 폴더명을 [] 대괄호 안에 넣어주면 동적 URL을 사용할 수 있음
-export default function MovieDetail({ params: { id } }: { params: { id: string } }) {
-  
+export default function MovieDetail({ params: { id } }: IParams) {
   return (
     <>
       {/* 
