@@ -16,8 +16,8 @@ export default async function MovieInfo({id}: {id:string}) {
       <div className={styles.info}>
         <h1 className={styles.title}>{movie.title}</h1>
         <strong>⭐️ {movie.vote_average.toFixed(1)}</strong>
-        <p>{movie.overview}</p>
-        <a href={movie.homepage} target="_blank">Homepage &rarr;</a>
+        <p className={styles.text}>{movie.overview}</p>
+        <a className={styles.link} href={movie.homepage} target="_blank">Homepage &rarr;</a>
       </div>
     </article>
   )
