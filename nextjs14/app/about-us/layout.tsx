@@ -1,4 +1,5 @@
-import { Metadata } from "next"
+import { Metadata } from "next";
+import styles from "../../styles/about-us.module.css";
 
 export const metadata: Metadata = {
   title: 'About Us',
@@ -6,9 +7,14 @@ export const metadata: Metadata = {
 
 export default function AboutUsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
+    <>
+    <div className={styles.layout}>
       {children}
-      &copy; NEXT JS IS GREAT!
     </div>
+
+    <footer className={styles.footer}>
+      &copy; NEXT JS IS GREAT!
+    </footer>
+    </>
   )
 }
